@@ -1,0 +1,11 @@
+---
+layout: page
+permalink: /onbellek/
+---
+
+= Onbellek
+
+Buralar hep blog olacak
+
+[source,ruby]
+puts "Hello, World!"
