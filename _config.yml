@@ -18,13 +18,16 @@ email: ~
 description: >- # this means to ignore newlines until "baseurl:"
   Blog 
 baseurl: "" # the subpath of your site, e.g. /blog
-url: "http://blog.onbellek.com" # the base hostname & protocol for your site, e.g. http://example.com
+url: "https://blog.onbellek.com" # the base hostname & protocol for your site, e.g. http://example.com
 #twitter_username: onbellek
 #github_username:  onbellek
 authors:
   baskin:
     name: Baskin Senbaslar
-    image: https://avatars0.githubusercontent.com/u/4246677?s=460&v=4      
+    image: https://avatars0.githubusercontent.com/u/4246677?s=460&v=4
+  fatih:
+    name: Fatih Bakir
+    image: https://gravatar.com/avatar/35df13054d8d9aef497eaba29e97d087
 
 # Build settings
 markdown: kramdown
