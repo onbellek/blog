@@ -21,3 +21,7 @@ steps:
       $(build.binariesDirectory):/srv/jekyll/_site
     containerCommand: 'jekyll build --future'
     detached: false
+- task: Bash@3
+  displayName: "Ls build"
+  inputs:
+    script: ls $(build.binariesDirectory)
