@@ -1,23 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.8.5">Jekyll</generator><link href="https://blog.onbellek.com/feed.xml" rel="self" type="application/atom+xml" /><link href="https://blog.onbellek.com/" rel="alternate" type="text/html" /><updated>2019-04-27T12:02:13-07:00</updated><id>https://blog.onbellek.com/feed.xml</id><title type="html">Önbellek Blog</title><subtitle>Blog </subtitle><entry><title type="html">Latex Ipsum Dolor Sit Amet</title><link href="https://blog.onbellek.com/latex/" rel="alternate" type="text/html" title="Latex Ipsum Dolor Sit Amet" /><published>2019-04-26T00:00:00-07:00</published><updated>2019-04-26T00:00:00-07:00</updated><id>https://blog.onbellek.com/latex-deneme</id><content type="html" xml:base="https://blog.onbellek.com/latex/">&lt;div class=&quot;paragraph&quot;&gt;
-&lt;p&gt;
-\begin{align*}
-   \text{minimize } &amp;amp; \int_{0}^{T_i}\left\|f_i(t)-o_i(t)\right\|^2 dt\\
-   \text{subject to }&amp;amp; \\
-   &amp;amp;f_i(t) \text{ is}\text{ continuous up to degree $c$},\\
-   &amp;amp;\frac{d^jf_i}{dt^j}(0) = \frac{d^jp_i}{dt^j}(0)\text{ for } j\in\{0,1,...,c\}\\
-   &amp;amp;f_i(t)\text{ is collision-free, and}\\
-   &amp;amp;\left\|\frac{d^k f_i(t)}{dt^k}\right\| \leq \gamma_k\text{ for all desired $k$},\\
-   \text{where } &amp;amp; t\in [0,T_i].
-\end{align*}
-&lt;/p&gt;
-&lt;/div&gt;</content><author><name>baskin</name></author></entry><entry><title type="html">Onbellek</title><link href="https://blog.onbellek.com/onbellek/" rel="alternate" type="text/html" title="Onbellek" /><published>2019-04-26T00:00:00-07:00</published><updated>2019-04-26T00:00:00-07:00</updated><id>https://blog.onbellek.com/onbellek</id><content type="html" xml:base="https://blog.onbellek.com/onbellek/">&lt;div class=&quot;paragraph&quot;&gt;
-&lt;p&gt;Buralar hep blog olacak&lt;/p&gt;
-&lt;/div&gt;
-&lt;div class=&quot;listingblock&quot;&gt;
-&lt;div class=&quot;content&quot;&gt;
-&lt;pre class=&quot;highlight&quot;&gt;&lt;code class=&quot;language-ruby&quot; data-lang=&quot;ruby&quot;&gt;puts &quot;Hello, World!&quot;&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-&lt;/div&gt;</content><author><name></name></author></entry><entry><title type="html">Çıplak new/delete kullanımından kaçının</title><link href="https://blog.onbellek.com/2016/11/25/naked_new_delete.html" rel="alternate" type="text/html" title="Çıplak new/delete kullanımından kaçının" /><published>2016-11-25T00:00:00-08:00</published><updated>2016-11-25T00:00:00-08:00</updated><id>https://blog.onbellek.com/2016/11/25/naked_new_delete</id><content type="html" xml:base="https://blog.onbellek.com/2016/11/25/naked_new_delete.html">&lt;p&gt;Dinamik memory (yada genel olarak dinamik kaynaklar), genellikle masraflı olduğu ve bir şekilde lifetime sorunları çıkardığı için olabidiğince kaçınmaya çalıştığımız bir özellik. Fakat tabi ki tamamen dinamik memory kullanımından kaçınmak mümkün değil, runtime’da belli olan array sayıları, linked list kullanımı, polimorfik nesneler vs tamamen dinamik memory allocation’a bağımlı çalışan zımbırtılar.&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.8.5">Jekyll</generator><link href="https://blog.onbellek.com/feed.xml" rel="self" type="application/atom+xml" /><link href="https://blog.onbellek.com/" rel="alternate" type="text/html" /><updated>2019-04-27T13:26:55-07:00</updated><id>https://blog.onbellek.com/feed.xml</id><title type="html">Önbellek Blog</title><subtitle>Blog </subtitle><entry><title type="html">Çıplak new/delete kullanımından kaçının</title><link href="https://blog.onbellek.com/2016/11/25/naked_new_delete.html" rel="alternate" type="text/html" title="Çıplak new/delete kullanımından kaçının" /><published>2016-11-25T00:00:00-08:00</published><updated>2016-11-25T00:00:00-08:00</updated><id>https://blog.onbellek.com/2016/11/25/naked_new_delete</id><content type="html" xml:base="https://blog.onbellek.com/2016/11/25/naked_new_delete.html">&lt;p&gt;Dinamik memory (yada genel olarak dinamik kaynaklar), genellikle masraflı olduğu ve bir şekilde lifetime sorunları çıkardığı için olabidiğince kaçınmaya çalıştığımız bir özellik. Fakat tabi ki tamamen dinamik memory kullanımından kaçınmak mümkün değil, runtime’da belli olan array sayıları, linked list kullanımı, polimorfik nesneler vs tamamen dinamik memory allocation’a bağımlı çalışan zımbırtılar.&lt;/p&gt;
 
 &lt;p&gt;Ancak, kaçınamıyor olmamız, dinamik kaynak yönetimi sorunlarına kafa atmak zorunda olduğumuz anlamına gelmiyor.&lt;/p&gt;
 
