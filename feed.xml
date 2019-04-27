@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.8.5">Jekyll</generator><link href="https://blog.onbellek.com/feed.xml" rel="self" type="application/atom+xml" /><link href="https://blog.onbellek.com/" rel="alternate" type="text/html" /><updated>2019-04-27T01:10:24-07:00</updated><id>https://blog.onbellek.com/feed.xml</id><title type="html">Önbellek Blog</title><subtitle>Blog </subtitle><entry><title type="html">Latex Ipsum Dolor Sit Amet</title><link href="https://blog.onbellek.com/latex/" rel="alternate" type="text/html" title="Latex Ipsum Dolor Sit Amet" /><published>2019-04-26T00:00:00-07:00</published><updated>2019-04-26T00:00:00-07:00</updated><id>https://blog.onbellek.com/latex-deneme</id><content type="html" xml:base="https://blog.onbellek.com/latex/">&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;
+\begin{align*}
+   \text{minimize } &amp;amp; \int_{0}^{T_i}\left\|f_i(t)-o_i(t)\right\|^2 dt\\
+   \text{subject to }&amp;amp; \\
+   &amp;amp;f_i(t) \text{ is}\text{ continuous up to degree $c$},\\
+   &amp;amp;\frac{d^jf_i}{dt^j}(0) = \frac{d^jp_i}{dt^j}(0)\text{ for } j\in\{0,1,...,c\}\\
+   &amp;amp;f_i(t)\text{ is collision-free, and}\\
+   &amp;amp;\left\|\frac{d^k f_i(t)}{dt^k}\right\| \leq \gamma_k\text{ for all desired $k$},\\
+   \text{where } &amp;amp; t\in [0,T_i].
+\end{align*}
+&lt;/p&gt;
+&lt;/div&gt;</content><author><name>baskin</name></author></entry><entry><title type="html">Onbellek</title><link href="https://blog.onbellek.com/onbellek/" rel="alternate" type="text/html" title="Onbellek" /><published>2019-04-26T00:00:00-07:00</published><updated>2019-04-26T00:00:00-07:00</updated><id>https://blog.onbellek.com/onbellek</id><content type="html" xml:base="https://blog.onbellek.com/onbellek/">&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Buralar hep blog olacak&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;highlight&quot;&gt;&lt;code class=&quot;language-ruby&quot; data-lang=&quot;ruby&quot;&gt;puts &quot;Hello, World!&quot;&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;</content><author><name></name></author></entry><entry><title type="html">Çıplak new/delete kullanımından kaçının</title><link href="https://blog.onbellek.com/2016/11/25/naked_new_delete.html" rel="alternate" type="text/html" title="Çıplak &lt;code&gt;new&lt;/code&gt;/&lt;code&gt;delete&lt;/code&gt; kullanımından kaçının" /><published>2016-11-25T00:00:00-08:00</published><updated>2016-11-25T00:00:00-08:00</updated><id>https://blog.onbellek.com/2016/11/25/naked_new_delete</id><content type="html" xml:base="https://blog.onbellek.com/2016/11/25/naked_new_delete.html">&lt;p&gt;Dinamik memory (yada genel olarak dinamik kaynaklar), genellikle masraflı olduğu ve bir şekilde lifetime sorunları çıkardığı için olabidiğince kaçınmaya çalıştığımız bir özellik. Fakat tabi ki tamamen dinamik memory kullanımından kaçınmak mümkün değil, runtime’da belli olan array sayıları, linked list kullanımı, polimorfik nesneler vs tamamen dinamik memory allocation’a bağımlı çalışan zımbırtılar.&lt;/p&gt;
+
+&lt;p&gt;Ancak, kaçınamıyor olmamız, dinamik kaynak yönetimi sorunlarına kafa atmak zorunda olduğumuz anlamına gelmiyor.&lt;/p&gt;
+
+&lt;h2 id=&quot;dinamik-kaynak-yönetimi&quot;&gt;Dinamik kaynak yönetimi&lt;/h2&gt;
+
+&lt;p&gt;Eğer ki dinamik memory ile ilgili sıkıntılarla ilgili benimle fikir birliğinde değilseniz, endişelerden bir kaçını aşağıda sıralayayım:&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;
+    &lt;p&gt;Önemli sıkıntılardan biri performans endişesi: stack’te bir obje oluşturmak &lt;em&gt;t&lt;/em&gt; zaman alıyorsa, aynı objeyi dinamik memory’de oluşturmak her zaman &lt;em&gt;t&lt;/em&gt; süreden fazla alacaktır. Dolayısıyla, bir şeyleri otomatik yada statik storage’da tutmaya çabalamak en mantıklısı.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Bir diğer ölümcül bir sorun ise, dinamik olarak oluşturduğunuz objeleri silmemek. Aldığınız objeleri silmeyerek birincisi, bu objenin üzerinde durduğu hafızayı sistemden alıkoyuyorsunuz, yani bildiğiniz memory leak. İkincisi, bu objenin dinamik olarak aldığı ek memory (örneğin &lt;code class=&quot;highlighter-rouge&quot;&gt;std::vector&lt;/code&gt;) veya diğer kaynaklar olabilir, ve bu objenin destructor’ını çağırmadığınız için, diğer bu nesne ve kaynakların da gereksiz yere hayatta kalmasına sebep oluyorsunuz.&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;Örneğin:&lt;/p&gt;
+
+&lt;div class=&quot;language-cpp highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;some_class&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;std&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;vector&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;some_class&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;children&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;std&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ofstream&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;log&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+  
+  &lt;span class=&quot;n&quot;&gt;some_class&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;log&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;log.txt&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;children&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;resize&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;8&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;};&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;some_class&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ptr&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;some_class&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;..&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ptr&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;yi&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;kullan&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Yukarıdakı blokta, &lt;code class=&quot;highlighter-rouge&quot;&gt;new&lt;/code&gt; ile aldığımız &lt;code class=&quot;highlighter-rouge&quot;&gt;*ptr&lt;/code&gt; objesinin destructor’ı asla çağırılmayacak. Dolayısıyla, içinde tuttuğu &lt;code class=&quot;highlighter-rouge&quot;&gt;std::vector&lt;/code&gt; ve &lt;code class=&quot;highlighter-rouge&quot;&gt;std::ofstream&lt;/code&gt; objelerinin de destructor’ı da asla çağırılmayacak. &lt;code class=&quot;highlighter-rouge&quot;&gt;std::vector&lt;/code&gt; içinde bulunan diğer &lt;code class=&quot;highlighter-rouge&quot;&gt;some_class&lt;/code&gt; objelerine değinmeme sanırım gerek yok.&lt;/p&gt;
+
+&lt;p&gt;Yani, &lt;code class=&quot;highlighter-rouge&quot;&gt;new&lt;/code&gt; ile aldığınız bir objeyi &lt;code class=&quot;highlighter-rouge&quot;&gt;delete&lt;/code&gt; ile geri vermenizin sebebi sadece dinamik memory’yi iade etmek değil, aynı zamanda o alanda bulunan objelerin destructorlarını çağırmaktır. Tabii bir şeyleri &lt;code class=&quot;highlighter-rouge&quot;&gt;new&lt;/code&gt; ile almazsanız, &lt;code class=&quot;highlighter-rouge&quot;&gt;delete&lt;/code&gt;‘lemek zorunda da kalmazsınız. Dolayısıyla, nesnelerinizi olabildiğince stackte oluşturmaya çabalamalısınız.&lt;/p&gt;
+
+&lt;h2 id=&quot;pointerları-saralım&quot;&gt;Pointerları saralım&lt;/h2&gt;
+
+&lt;p&gt;Bütün dinamik allocation’lardan kaçınmak çok gerçekçi bir hedef değil. Girişte saydığımız gibi sebeplerden dolayı, bir şekilde dinamik memory kullanmak zorundayız.&lt;/p&gt;
+
+&lt;p&gt;Öncelikle basit bir konsept ile başlayalım: destructorlar. C++’da, herhangi bir scope(fonksyon gövdesi, objeler, loop gövdesi vs) ömrünü doldurduğu zaman, o scope’a ait bütün nesnelerin destructor’ları çağırılır. Örneğin, aşağıdakı bloğu göz önünde bulundurun:&lt;/p&gt;
+
+&lt;div class=&quot;language-cpp highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;
+&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;foo&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;std&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;vector&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;vec&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;128&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+  &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ptr&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;128&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;];&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;...&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;vec&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ve&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ptr&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;yi&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;kullan&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;...&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;bu&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;kapan&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;ış&lt;/span&gt;
+
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Yukarıda işaretli olan kapanış, &lt;code class=&quot;highlighter-rouge&quot;&gt;foo&lt;/code&gt; fonksyonundaki bütün local değişkenlerin destructorlarının çağırılmasına sebep olacak. &lt;code class=&quot;highlighter-rouge&quot;&gt;vec&lt;/code&gt; nesnesinin destructor’ı, dinamik olarak alınmış memory’nin salınmasını sağlayarak herhangi bir kaynak leakinin önüne geçiyor.&lt;/p&gt;
+
+&lt;p&gt;Bu noktada, aslında &lt;code class=&quot;highlighter-rouge&quot;&gt;ptr&lt;/code&gt; nesnesinin de destructor’ı çağırılmakta. Fakat, C++’a göre, pointer tiplerinin destructorları hiç bir iş yapmamakta, dolayısıyla bu destructor’ın çağırılıyor yada çağırılmıyor olması çok bir anlam ifade etmemekte. Destructorları hiç bir iş yapmadığı için, bu noktadan itibaren bu tarz pointerlara &lt;em&gt;mal&lt;/em&gt; pointer adını vereceğiz.&lt;/p&gt;
+
+&lt;p&gt;Peki, mal olmayan bir pointer’a nasıl sahip oluyoruz? Yapabileceğimiz en basit şey, dinamik memory’de bir nesneyi gösteren pointerları bir obje içine sarmak, ve bu objenin scope’dan düşerken, içinde tuttuğu pointerın gösterdiği objeyi de silmesini sağlamak:&lt;/p&gt;
+
+&lt;div class=&quot;language-cpp highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;zeki&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ptr&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;public&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;zeki&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ptr&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ptr&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ptr&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{}&lt;/span&gt;
+  &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;get&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ptr&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+  &lt;span class=&quot;o&quot;&gt;~&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;zeki&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;delete&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ptr&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt; 
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+&lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;foo&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;zeki&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ptr&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+  &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ptr&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;get&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;5&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;...&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ptr&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;get&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;kullan&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;...&lt;/span&gt;
+  &lt;span class=&quot;c1&quot;&gt;// &amp;lt;- delete yok!&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ptr&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ptr&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;bu&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;noktada&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;otomatik&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;olarak&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;siliniyor&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;7-8 satırlık bu zeki sınıfı bizi dinamik olarak aldığımız nesneleri silmeyi unutmama zahmetinden kurtarıyor. Fakat, 7-8 satırlık bir sınıf olduğu için hala yeterince zeki değil. Örneğin, bir zeki nesnesini kopyalarsak ne olur?&lt;/p&gt;
+
+&lt;h2 id=&quot;daha-akıllı-pointerlar&quot;&gt;Daha akıllı pointerlar&lt;/h2&gt;
+
+&lt;p&gt;Yukarıdaki gibi bir kodu ilk defa görüyorsanız şaşırmış olabilirsiniz fakat bu tarz nesneler C++’ın kaynak yönetim mantığını oluşturuyor. Örneğin &lt;code class=&quot;highlighter-rouge&quot;&gt;vector&lt;/code&gt;, &lt;code class=&quot;highlighter-rouge&quot;&gt;fstream&lt;/code&gt;, &lt;code class=&quot;highlighter-rouge&quot;&gt;list&lt;/code&gt; ve daha nice standart kütüphane sınıfı, bir çeşit kaynağı yönetmek için varlar.&lt;/p&gt;
+
+&lt;p&gt;C++11 ile beraber gelen çok basit ve kullanışlı bir akıllı pointer var: &lt;code class=&quot;highlighter-rouge&quot;&gt;std::unique_ptr&lt;/code&gt;. Tıpkı yukarıdaki zeki objemiz gibi, bir pointer’ın sahipliğini üstlenip, scope’dan düşerken, gösterdiği nesneyi de yanında götüren süper nesneler. Örneğin:&lt;/p&gt;
+
+&lt;div class=&quot;language-cpp highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;foo&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;std&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;unique_ptr&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ptr&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;...&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ptr&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;get&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;kullan&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;...&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;bu&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;noktada&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;allocate&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ettigimiz&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;nesne&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;otomatik&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;olarak&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;siliniyor&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Aynı işlevi sağlamanın yanında, aynı zamanda bizim pointerın aksine kopyalanmama işlevine de sahipler. Dolayısıyla, programınızda aynı dinamik nesneyi gösteren sadece bir &lt;code class=&quot;highlighter-rouge&quot;&gt;unique_ptr&lt;/code&gt; nesnesi olduğunu garantileyebiliyorsunuz:&lt;/p&gt;
+
+&lt;div class=&quot;language-cpp highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;std&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;unique_ptr&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ptr&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;std&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;unique_ptr&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;p2&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ptr&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;// illegal, unique_ptr nesneleri kopyalanamaz&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Eğer kopyalanamayan tipler size yabancı geliyorsa, şöyle düşünün: bir unique_ptr nesnesinin kopyalanması tam olarak ne ifade etmeli? Nesnenin içinde tuttuğu pointer’ı diğerine kopyalayamayacağımız çok açık zira bu durumda aynı nesneyi gösteren 2 adet &lt;code class=&quot;highlighter-rouge&quot;&gt;unique_ptr&lt;/code&gt; nesnesine sahip oluyoruz ve double free gibi daha da saçma sorunlara sahip oluyoruz. Bir başka fikir, vector gibi, kopyalandığında gösterdiği dinamik nesneden bir kopya oluşturup, yeni unique_ptr objesinin o nesneyi göstermesini sağlamak olabilir. Ancak, istediğiniz davranış buysa, aradığınız akıllı pointer &lt;code class=&quot;highlighter-rouge&quot;&gt;unique_ptr&lt;/code&gt; değil.&lt;/p&gt;
+
+&lt;h2 id=&quot;new&quot;&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;new&lt;/code&gt;&lt;/h2&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;unique_ptr&lt;/code&gt; kullanarak, çıplak &lt;code class=&quot;highlighter-rouge&quot;&gt;delete&lt;/code&gt; çağrılarından kurtulmuş olduk. Bu noktadaki nokta, delete hala çağırılıyor; fakat çağıran biz değil, &lt;code class=&quot;highlighter-rouge&quot;&gt;unique_ptr&lt;/code&gt; objeleri. Ancak hala çıplak &lt;code class=&quot;highlighter-rouge&quot;&gt;new&lt;/code&gt; çağrıları yapıyoruz.&lt;/p&gt;
+
+&lt;p&gt;Evet, &lt;code class=&quot;highlighter-rouge&quot;&gt;delete&lt;/code&gt;‘lerden kurtulmak için son derece geçerli bir unutabilme problemimiz vardı. Fakat, new ile ilgili sorunun tam olarak nerde olduğunu göremiyor olabilirsiniz.&lt;/p&gt;
+
+&lt;p&gt;Temel sorun, &lt;code class=&quot;highlighter-rouge&quot;&gt;new&lt;/code&gt; çağrılarının mal pointerlar dönüyor olması. Her ne kadar doğrudan bir &lt;code class=&quot;highlighter-rouge&quot;&gt;unique_ptr&lt;/code&gt; ile sarıyor olsanız da, tıpkı &lt;code class=&quot;highlighter-rouge&quot;&gt;delete&lt;/code&gt;‘ler gibi bunu yapmayı unutabilirsiniz. Yada şunu yapabilirsiniz:&lt;/p&gt;
+
+&lt;div class=&quot;language-cpp highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;p&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;5&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;std&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;unique_ptr&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ptr&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;p&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;// tehlike&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Her ne kadar &lt;code class=&quot;highlighter-rouge&quot;&gt;new&lt;/code&gt; ile aldığınız nesneyi bir &lt;code class=&quot;highlighter-rouge&quot;&gt;unique_ptr&lt;/code&gt; ile sarmış olsanız da, hala bu nesneye bir mal pointer tutuyorsunuz. Ya &lt;code class=&quot;highlighter-rouge&quot;&gt;unique_ptr&lt;/code&gt; ile sardığınızı unutup manuel olarak bi daha silerseniz? Ya scope dışına kopyalarsanız? Ya bir başka &lt;code class=&quot;highlighter-rouge&quot;&gt;unique_ptr&lt;/code&gt; ile daha sararsanız? Evet 3 satırlık bir blokta bu hataları yapmayacağınız kesin, fakat 500 satırlık devasa bir fonksyon içerisine, 3-4 ay sonra döndüğünüzde “aa bu pointerı niye silmiyoruz” deme ihtimaliniz gerçekten var.&lt;/p&gt;
+
+&lt;p&gt;“Yav bi saattir &lt;code class=&quot;highlighter-rouge&quot;&gt;std::unique_ptr&amp;lt;int&amp;gt; ptr(new int(5));&lt;/code&gt; yapıyoruz o nerden çıktı?” diyor olabilir ve kendinizi güvende hissedebilirsiniz. Fakat bu durumla ilgili yine bir sorun bulunuyor:&lt;/p&gt;
+
+&lt;div class=&quot;language-cpp highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;bar&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;std&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;unique_ptr&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;p1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;std&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;unique_ptr&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;float&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;f&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;...&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;bar&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;std&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;unique_ptr&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;5&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)),&lt;/span&gt; 
+    &lt;span class=&quot;n&quot;&gt;std&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;unique_ptr&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;float&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;float&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mf&quot;&gt;3.14&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)));&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;...&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;bar&lt;/code&gt; fonksyonunu çağırırken, dinamik olarak iki nesne oluşturuyoruz ve ikisini de doğrudan &lt;code class=&quot;highlighter-rouge&quot;&gt;unique_ptr&lt;/code&gt; ile sarıyoruz: süperiz. Fakat, C++ fonksyon argümanlarının çalıştırılma sırasını garantilemiyor. O ne demek derseniz, yukarıdaki &lt;code class=&quot;highlighter-rouge&quot;&gt;bar&lt;/code&gt; fonksyonunun çağırılmasında 4 adet alt adım var:&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;tmp1 = new int(5)&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;tmp2 = std::unique_ptr&amp;lt;int&amp;gt;(tmp1)&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;tmp3 = new float(3.14)&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;tmp4 = std::unique_ptr&amp;lt;float&amp;gt;(tmp3)&lt;/code&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;C++’da argümanların evaluate edilme sırasının belirsiz olması, derleyicinizin bu adımları (1, 2, 3, 4) sırasında yapabileceği gibi (1, 3, 2, 4) veya uygun diğer herhangi bir sırada da yapabilir. Diyelim ki, 1. adımı yaptık ve 2. adımı atlayarak 3. adımı yapmaya karar verdik. C++’da new çağrıları eğer yeterince memory yoksa bir çeşit exception atmakta ve 3. adımdaki allocation gayet de başarısız olabilmekte. Tabi ki exception durumunda C++, o ana kadar oluştulmuş scope’daki bütün nesnelerin destructorlarını çağıracak. Ancak, 2. adımı sonraya bıraktığımız için, ilk &lt;code class=&quot;highlighter-rouge&quot;&gt;unique_ptr&lt;/code&gt;‘ın destructoru çağırılmayacak dolayısıyla 1. adımda aldığımız memory leak edilecek.&lt;/p&gt;
+
+&lt;p&gt;Dolayısıyla, new ile aldığınız pointerları doğrudan bir &lt;code class=&quot;highlighter-rouge&quot;&gt;unique_ptr&lt;/code&gt; ile sarsanız dahi, başarısız olabilirsiniz. Bu sebeple, çıplak &lt;code class=&quot;highlighter-rouge&quot;&gt;new&lt;/code&gt; çağrılarından kaçınmanızda ısrarcıyım.&lt;/p&gt;
+
+&lt;p&gt;Peki bunlardan nasıl kurtulacağız? Bu konuda çözüm yine bir C++11 kütüphane güncellemesiyle geliyor: &lt;code class=&quot;highlighter-rouge&quot;&gt;std::make_unique&lt;/code&gt;.&lt;/p&gt;
+
+&lt;div class=&quot;language-cpp highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;std&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;unique_ptr&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ptr&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;std&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;make_unique&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;5&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;auto&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ptr&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;std&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;make_unique&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;5&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;// daha da iyi&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;std::make_unique&lt;/code&gt;, sizin için dinamik olarak bir nesne oluşturup, size bu nesneyi gösteren bir unique_ptr dönüyor. Dolayısıyla, elinize dinamik nesneyi gösteren bir mal pointer asla geçmiyor. Bu demektir ki, bu nesneyi yanlışlıkla 2 kere silemezsiniz, bu nesneye 2 adet &lt;code class=&quot;highlighter-rouge&quot;&gt;unique_ptr&lt;/code&gt; tutamazsınız ve fonksyon argüman evaluation sırası dolayısıyla kaynak leak edemezsiniz!&lt;/p&gt;
+
+&lt;h2 id=&quot;sonuç&quot;&gt;Sonuç&lt;/h2&gt;
+
+&lt;p&gt;Her ne kadar işinizi rahatlatsa da, unique_ptr kullanarak hala bindiğiniz dalı kesmeniz mümkün. Örnek bir kod:&lt;/p&gt;
+
+&lt;div class=&quot;language-cpp highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;auto&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ptr&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;std&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;make_unique&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;std&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;string&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;hello world&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;...&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;std&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;string&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;s_ptr&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ptr&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;get&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;// tehlike&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;...&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Üstteki tehlikeli satırda, yine dinamik bir nesneyi gösteren mal bir pointer elde etmeyi başardık, ve bu pointer’ı yine elle silebiliriz yada bu pointer’ı bir başka unique_ptr içine sarabiliriz. Bu noktada sıkıntı, mal pointerların hala sahiplik belirttiğini düşünmemiz. Yani default olarak basit pointerların sahiplik belirtmediğine kendinizi ikna ederseniz bu tarz sorunların hiç biriyle karşılaşmayacaksınız.&lt;/p&gt;
+
+&lt;p&gt;Bu yazıdan aklınızda kalması gerekenler:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Çıplak &lt;code class=&quot;highlighter-rouge&quot;&gt;new&lt;/code&gt;/&lt;code class=&quot;highlighter-rouge&quot;&gt;delete&lt;/code&gt; çağrılarından kaçının&lt;/li&gt;
+  &lt;li&gt;Mal pointerların sahiplik belirtmesine asla izin vermeyin&lt;/li&gt;
+  &lt;li&gt;Dinamik kaynakları her zaman bir stack nesnesinin yönetmesini sağlayın&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;a href=&quot;http://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#a-namerr-newdeletear11-avoid-calling-new-and-delete-explicitly&quot;&gt;Konuyla alakalı CoreGuidelines bölümü&lt;/a&gt;&lt;/p&gt;</content><author><name></name></author><category term="c++" /><category term="resource-management" /><summary type="html">Dinamik memory (yada genel olarak dinamik kaynaklar), genellikle masraflı olduğu ve bir şekilde lifetime sorunları çıkardığı için olabidiğince kaçınmaya çalıştığımız bir özellik. Fakat tabi ki tamamen dinamik memory kullanımından kaçınmak mümkün değil, runtime’da belli olan array sayıları, linked list kullanımı, polimorfik nesneler vs tamamen dinamik memory allocation’a bağımlı çalışan zımbırtılar.</summary></entry></feed>

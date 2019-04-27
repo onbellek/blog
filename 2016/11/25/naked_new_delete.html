@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.6.0 -->
+<title>Çıplak new/delete kullanımından kaçının | Önbellek Blog</title>
+<meta name="generator" content="Jekyll v3.8.5" />
+<meta property="og:title" content="Çıplak new/delete kullanımından kaçının" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Dinamik memory (yada genel olarak dinamik kaynaklar), genellikle masraflı olduğu ve bir şekilde lifetime sorunları çıkardığı için olabidiğince kaçınmaya çalıştığımız bir özellik. Fakat tabi ki tamamen dinamik memory kullanımından kaçınmak mümkün değil, runtime’da belli olan array sayıları, linked list kullanımı, polimorfik nesneler vs tamamen dinamik memory allocation’a bağımlı çalışan zımbırtılar." />
+<meta property="og:description" content="Dinamik memory (yada genel olarak dinamik kaynaklar), genellikle masraflı olduğu ve bir şekilde lifetime sorunları çıkardığı için olabidiğince kaçınmaya çalıştığımız bir özellik. Fakat tabi ki tamamen dinamik memory kullanımından kaçınmak mümkün değil, runtime’da belli olan array sayıları, linked list kullanımı, polimorfik nesneler vs tamamen dinamik memory allocation’a bağımlı çalışan zımbırtılar." />
+<link rel="canonical" href="https://blog.onbellek.com/2016/11/25/naked_new_delete.html" />
+<meta property="og:url" content="https://blog.onbellek.com/2016/11/25/naked_new_delete.html" />
+<meta property="og:site_name" content="Önbellek Blog" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2016-11-25T00:00:00-08:00" />
+<script type="application/ld+json">
+{"@type":"BlogPosting","headline":"Çıplak new/delete kullanımından kaçının","dateModified":"2016-11-25T00:00:00-08:00","datePublished":"2016-11-25T00:00:00-08:00","mainEntityOfPage":{"@type":"WebPage","@id":"https://blog.onbellek.com/2016/11/25/naked_new_delete.html"},"url":"https://blog.onbellek.com/2016/11/25/naked_new_delete.html","description":"Dinamik memory (yada genel olarak dinamik kaynaklar), genellikle masraflı olduğu ve bir şekilde lifetime sorunları çıkardığı için olabidiğince kaçınmaya çalıştığımız bir özellik. Fakat tabi ki tamamen dinamik memory kullanımından kaçınmak mümkün değil, runtime’da belli olan array sayıları, linked list kullanımı, polimorfik nesneler vs tamamen dinamik memory allocation’a bağımlı çalışan zımbırtılar.","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/assets/main.css"><link type="application/atom+xml" rel="alternate" href="https://blog.onbellek.com/feed.xml" title="Önbellek Blog" /></head>
+<body><header class="site-header" role="banner">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/">Önbellek Blog</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/about/">Hakkinda</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        
+<article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">Çıplak &lt;code&gt;new&lt;/code&gt;/&lt;code&gt;delete&lt;/code&gt; kullanımından kaçının</h1>
+    <p class="post-meta">
+      <time class="dt-published" datetime="2016-11-25T00:00:00-08:00" itemprop="datePublished">Nov 25, 2016
+      </time></p>
+  </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <p>Dinamik memory (yada genel olarak dinamik kaynaklar), genellikle masraflı olduğu ve bir şekilde lifetime sorunları çıkardığı için olabidiğince kaçınmaya çalıştığımız bir özellik. Fakat tabi ki tamamen dinamik memory kullanımından kaçınmak mümkün değil, runtime’da belli olan array sayıları, linked list kullanımı, polimorfik nesneler vs tamamen dinamik memory allocation’a bağımlı çalışan zımbırtılar.</p>
+
+<p>Ancak, kaçınamıyor olmamız, dinamik kaynak yönetimi sorunlarına kafa atmak zorunda olduğumuz anlamına gelmiyor.</p>
+
+<h2 id="dinamik-kaynak-yönetimi">Dinamik kaynak yönetimi</h2>
+
+<p>Eğer ki dinamik memory ile ilgili sıkıntılarla ilgili benimle fikir birliğinde değilseniz, endişelerden bir kaçını aşağıda sıralayayım:</p>
+
+<ol>
+  <li>
+    <p>Önemli sıkıntılardan biri performans endişesi: stack’te bir obje oluşturmak <em>t</em> zaman alıyorsa, aynı objeyi dinamik memory’de oluşturmak her zaman <em>t</em> süreden fazla alacaktır. Dolayısıyla, bir şeyleri otomatik yada statik storage’da tutmaya çabalamak en mantıklısı.</p>
+  </li>
+  <li>
+    <p>Bir diğer ölümcül bir sorun ise, dinamik olarak oluşturduğunuz objeleri silmemek. Aldığınız objeleri silmeyerek birincisi, bu objenin üzerinde durduğu hafızayı sistemden alıkoyuyorsunuz, yani bildiğiniz memory leak. İkincisi, bu objenin dinamik olarak aldığı ek memory (örneğin <code class="highlighter-rouge">std::vector</code>) veya diğer kaynaklar olabilir, ve bu objenin destructor’ını çağırmadığınız için, diğer bu nesne ve kaynakların da gereksiz yere hayatta kalmasına sebep oluyorsunuz.</p>
+  </li>
+</ol>
+
+<p>Örneğin:</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">some_class</span>
+<span class="p">{</span>
+  <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">some_class</span><span class="o">&gt;</span> <span class="n">children</span><span class="p">;</span>
+  <span class="n">std</span><span class="o">::</span><span class="n">ofstream</span> <span class="n">log</span><span class="p">;</span>
+  
+  <span class="n">some_class</span><span class="p">()</span> <span class="o">:</span> <span class="n">log</span><span class="p">(</span><span class="s">"log.txt"</span><span class="p">)</span>
+  <span class="p">{</span>
+    <span class="n">children</span><span class="p">.</span><span class="n">resize</span><span class="p">(</span><span class="mi">8</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="n">some_class</span><span class="o">*</span> <span class="n">ptr</span> <span class="o">=</span> <span class="k">new</span> <span class="n">some_class</span><span class="p">;</span>
+<span class="p">..</span> <span class="n">ptr</span><span class="err">'</span><span class="n">yi</span> <span class="n">kullan</span>
+</code></pre></div></div>
+
+<p>Yukarıdakı blokta, <code class="highlighter-rouge">new</code> ile aldığımız <code class="highlighter-rouge">*ptr</code> objesinin destructor’ı asla çağırılmayacak. Dolayısıyla, içinde tuttuğu <code class="highlighter-rouge">std::vector</code> ve <code class="highlighter-rouge">std::ofstream</code> objelerinin de destructor’ı da asla çağırılmayacak. <code class="highlighter-rouge">std::vector</code> içinde bulunan diğer <code class="highlighter-rouge">some_class</code> objelerine değinmeme sanırım gerek yok.</p>
+
+<p>Yani, <code class="highlighter-rouge">new</code> ile aldığınız bir objeyi <code class="highlighter-rouge">delete</code> ile geri vermenizin sebebi sadece dinamik memory’yi iade etmek değil, aynı zamanda o alanda bulunan objelerin destructorlarını çağırmaktır. Tabii bir şeyleri <code class="highlighter-rouge">new</code> ile almazsanız, <code class="highlighter-rouge">delete</code>‘lemek zorunda da kalmazsınız. Dolayısıyla, nesnelerinizi olabildiğince stackte oluşturmaya çabalamalısınız.</p>
+
+<h2 id="pointerları-saralım">Pointerları saralım</h2>
+
+<p>Bütün dinamik allocation’lardan kaçınmak çok gerçekçi bir hedef değil. Girişte saydığımız gibi sebeplerden dolayı, bir şekilde dinamik memory kullanmak zorundayız.</p>
+
+<p>Öncelikle basit bir konsept ile başlayalım: destructorlar. C++’da, herhangi bir scope(fonksyon gövdesi, objeler, loop gövdesi vs) ömrünü doldurduğu zaman, o scope’a ait bütün nesnelerin destructor’ları çağırılır. Örneğin, aşağıdakı bloğu göz önünde bulundurun:</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="kt">int</span> <span class="nf">foo</span><span class="p">()</span>
+<span class="p">{</span>
+  <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">vec</span><span class="p">(</span><span class="mi">128</span><span class="p">);</span>
+  <span class="kt">int</span><span class="o">*</span> <span class="n">ptr</span> <span class="o">=</span> <span class="k">new</span> <span class="kt">int</span><span class="p">[</span><span class="mi">128</span><span class="p">];</span>
+  <span class="p">...</span> <span class="n">vec</span> <span class="n">ve</span> <span class="n">ptr</span><span class="err">'</span><span class="n">yi</span> <span class="n">kullan</span> <span class="p">...</span>
+<span class="p">}</span> <span class="o">&lt;-</span> <span class="n">bu</span> <span class="n">kapan</span><span class="err">ış</span>
+
+</code></pre></div></div>
+
+<p>Yukarıda işaretli olan kapanış, <code class="highlighter-rouge">foo</code> fonksyonundaki bütün local değişkenlerin destructorlarının çağırılmasına sebep olacak. <code class="highlighter-rouge">vec</code> nesnesinin destructor’ı, dinamik olarak alınmış memory’nin salınmasını sağlayarak herhangi bir kaynak leakinin önüne geçiyor.</p>
+
+<p>Bu noktada, aslında <code class="highlighter-rouge">ptr</code> nesnesinin de destructor’ı çağırılmakta. Fakat, C++’a göre, pointer tiplerinin destructorları hiç bir iş yapmamakta, dolayısıyla bu destructor’ın çağırılıyor yada çağırılmıyor olması çok bir anlam ifade etmemekte. Destructorları hiç bir iş yapmadığı için, bu noktadan itibaren bu tarz pointerlara <em>mal</em> pointer adını vereceğiz.</p>
+
+<p>Peki, mal olmayan bir pointer’a nasıl sahip oluyoruz? Yapabileceğimiz en basit şey, dinamik memory’de bir nesneyi gösteren pointerları bir obje içine sarmak, ve bu objenin scope’dan düşerken, içinde tuttuğu pointerın gösterdiği objeyi de silmesini sağlamak:</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">zeki</span>
+<span class="p">{</span>
+  <span class="kt">int</span><span class="o">*</span> <span class="n">ptr</span><span class="p">;</span>
+<span class="k">public</span><span class="o">:</span>
+  <span class="n">zeki</span><span class="p">(</span><span class="kt">int</span><span class="o">*</span> <span class="n">ptr</span><span class="p">)</span> <span class="o">:</span> <span class="n">ptr</span><span class="p">(</span><span class="n">ptr</span><span class="p">)</span> <span class="p">{}</span>
+  <span class="kt">int</span><span class="o">*</span> <span class="n">get</span><span class="p">()</span> <span class="p">{</span> <span class="k">return</span> <span class="n">ptr</span><span class="p">;</span> <span class="p">}</span>
+  <span class="o">~</span><span class="n">zeki</span><span class="p">()</span> <span class="p">{</span> <span class="k">delete</span> <span class="n">ptr</span><span class="p">;</span> <span class="p">}</span> 
+<span class="p">}</span>
+
+<span class="kt">void</span> <span class="n">foo</span><span class="p">()</span>
+<span class="p">{</span>
+  <span class="n">zeki</span> <span class="n">ptr</span><span class="p">(</span><span class="k">new</span> <span class="kt">int</span><span class="p">);</span>
+  <span class="o">*</span><span class="n">ptr</span><span class="p">.</span><span class="n">get</span><span class="p">()</span> <span class="o">=</span> <span class="mi">5</span><span class="p">;</span>
+  <span class="p">...</span> <span class="n">ptr</span><span class="p">.</span><span class="n">get</span><span class="p">()</span><span class="err">'</span><span class="n">i</span> <span class="n">kullan</span> <span class="p">...</span>
+  <span class="c1">// &lt;- delete yok!</span>
+<span class="p">}</span> <span class="o">&lt;-</span> <span class="o">*</span><span class="n">ptr</span><span class="p">.</span><span class="n">ptr</span> <span class="n">bu</span> <span class="n">noktada</span> <span class="n">otomatik</span> <span class="n">olarak</span> <span class="n">siliniyor</span>
+</code></pre></div></div>
+
+<p>7-8 satırlık bu zeki sınıfı bizi dinamik olarak aldığımız nesneleri silmeyi unutmama zahmetinden kurtarıyor. Fakat, 7-8 satırlık bir sınıf olduğu için hala yeterince zeki değil. Örneğin, bir zeki nesnesini kopyalarsak ne olur?</p>
+
+<h2 id="daha-akıllı-pointerlar">Daha akıllı pointerlar</h2>
+
+<p>Yukarıdaki gibi bir kodu ilk defa görüyorsanız şaşırmış olabilirsiniz fakat bu tarz nesneler C++’ın kaynak yönetim mantığını oluşturuyor. Örneğin <code class="highlighter-rouge">vector</code>, <code class="highlighter-rouge">fstream</code>, <code class="highlighter-rouge">list</code> ve daha nice standart kütüphane sınıfı, bir çeşit kaynağı yönetmek için varlar.</p>
+
+<p>C++11 ile beraber gelen çok basit ve kullanışlı bir akıllı pointer var: <code class="highlighter-rouge">std::unique_ptr</code>. Tıpkı yukarıdaki zeki objemiz gibi, bir pointer’ın sahipliğini üstlenip, scope’dan düşerken, gösterdiği nesneyi de yanında götüren süper nesneler. Örneğin:</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">void</span> <span class="nf">foo</span><span class="p">()</span>
+<span class="p">{</span>
+  <span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">ptr</span><span class="p">(</span><span class="k">new</span> <span class="kt">int</span><span class="p">);</span>
+  <span class="p">...</span> <span class="n">ptr</span><span class="p">.</span><span class="n">get</span><span class="p">()</span><span class="err">'</span><span class="n">i</span> <span class="n">kullan</span> <span class="p">...</span>
+<span class="p">}</span> <span class="o">&lt;-</span> <span class="n">bu</span> <span class="n">noktada</span><span class="p">,</span> <span class="n">allocate</span> <span class="n">ettigimiz</span> <span class="n">nesne</span> <span class="n">otomatik</span> <span class="n">olarak</span> <span class="n">siliniyor</span>
+</code></pre></div></div>
+
+<p>Aynı işlevi sağlamanın yanında, aynı zamanda bizim pointerın aksine kopyalanmama işlevine de sahipler. Dolayısıyla, programınızda aynı dinamik nesneyi gösteren sadece bir <code class="highlighter-rouge">unique_ptr</code> nesnesi olduğunu garantileyebiliyorsunuz:</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">ptr</span><span class="p">(</span><span class="k">new</span> <span class="kt">int</span><span class="p">);</span>
+<span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">p2</span> <span class="o">=</span> <span class="n">ptr</span><span class="p">;</span> <span class="c1">// illegal, unique_ptr nesneleri kopyalanamaz</span>
+</code></pre></div></div>
+
+<p>Eğer kopyalanamayan tipler size yabancı geliyorsa, şöyle düşünün: bir unique_ptr nesnesinin kopyalanması tam olarak ne ifade etmeli? Nesnenin içinde tuttuğu pointer’ı diğerine kopyalayamayacağımız çok açık zira bu durumda aynı nesneyi gösteren 2 adet <code class="highlighter-rouge">unique_ptr</code> nesnesine sahip oluyoruz ve double free gibi daha da saçma sorunlara sahip oluyoruz. Bir başka fikir, vector gibi, kopyalandığında gösterdiği dinamik nesneden bir kopya oluşturup, yeni unique_ptr objesinin o nesneyi göstermesini sağlamak olabilir. Ancak, istediğiniz davranış buysa, aradığınız akıllı pointer <code class="highlighter-rouge">unique_ptr</code> değil.</p>
+
+<h2 id="new"><code class="highlighter-rouge">new</code></h2>
+
+<p><code class="highlighter-rouge">unique_ptr</code> kullanarak, çıplak <code class="highlighter-rouge">delete</code> çağrılarından kurtulmuş olduk. Bu noktadaki nokta, delete hala çağırılıyor; fakat çağıran biz değil, <code class="highlighter-rouge">unique_ptr</code> objeleri. Ancak hala çıplak <code class="highlighter-rouge">new</code> çağrıları yapıyoruz.</p>
+
+<p>Evet, <code class="highlighter-rouge">delete</code>‘lerden kurtulmak için son derece geçerli bir unutabilme problemimiz vardı. Fakat, new ile ilgili sorunun tam olarak nerde olduğunu göremiyor olabilirsiniz.</p>
+
+<p>Temel sorun, <code class="highlighter-rouge">new</code> çağrılarının mal pointerlar dönüyor olması. Her ne kadar doğrudan bir <code class="highlighter-rouge">unique_ptr</code> ile sarıyor olsanız da, tıpkı <code class="highlighter-rouge">delete</code>‘ler gibi bunu yapmayı unutabilirsiniz. Yada şunu yapabilirsiniz:</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">int</span><span class="o">*</span> <span class="n">p</span> <span class="o">=</span> <span class="k">new</span> <span class="kt">int</span><span class="p">(</span><span class="mi">5</span><span class="p">);</span>
+<span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">ptr</span><span class="p">(</span><span class="n">p</span><span class="p">);</span> <span class="c1">// tehlike</span>
+</code></pre></div></div>
+
+<p>Her ne kadar <code class="highlighter-rouge">new</code> ile aldığınız nesneyi bir <code class="highlighter-rouge">unique_ptr</code> ile sarmış olsanız da, hala bu nesneye bir mal pointer tutuyorsunuz. Ya <code class="highlighter-rouge">unique_ptr</code> ile sardığınızı unutup manuel olarak bi daha silerseniz? Ya scope dışına kopyalarsanız? Ya bir başka <code class="highlighter-rouge">unique_ptr</code> ile daha sararsanız? Evet 3 satırlık bir blokta bu hataları yapmayacağınız kesin, fakat 500 satırlık devasa bir fonksyon içerisine, 3-4 ay sonra döndüğünüzde “aa bu pointerı niye silmiyoruz” deme ihtimaliniz gerçekten var.</p>
+
+<p>“Yav bi saattir <code class="highlighter-rouge">std::unique_ptr&lt;int&gt; ptr(new int(5));</code> yapıyoruz o nerden çıktı?” diyor olabilir ve kendinizi güvende hissedebilirsiniz. Fakat bu durumla ilgili yine bir sorun bulunuyor:</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">void</span> <span class="n">bar</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">p1</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;</span> <span class="n">f</span><span class="p">);</span>
+<span class="p">...</span>
+<span class="n">bar</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">(</span><span class="k">new</span> <span class="kt">int</span><span class="p">(</span><span class="mi">5</span><span class="p">)),</span> 
+    <span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;</span><span class="p">(</span><span class="k">new</span> <span class="kt">float</span><span class="p">(</span><span class="mf">3.14</span><span class="p">)));</span>
+<span class="p">...</span>
+</code></pre></div></div>
+
+<p><code class="highlighter-rouge">bar</code> fonksyonunu çağırırken, dinamik olarak iki nesne oluşturuyoruz ve ikisini de doğrudan <code class="highlighter-rouge">unique_ptr</code> ile sarıyoruz: süperiz. Fakat, C++ fonksyon argümanlarının çalıştırılma sırasını garantilemiyor. O ne demek derseniz, yukarıdaki <code class="highlighter-rouge">bar</code> fonksyonunun çağırılmasında 4 adet alt adım var:</p>
+
+<ol>
+  <li><code class="highlighter-rouge">tmp1 = new int(5)</code></li>
+  <li><code class="highlighter-rouge">tmp2 = std::unique_ptr&lt;int&gt;(tmp1)</code></li>
+  <li><code class="highlighter-rouge">tmp3 = new float(3.14)</code></li>
+  <li><code class="highlighter-rouge">tmp4 = std::unique_ptr&lt;float&gt;(tmp3)</code></li>
+</ol>
+
+<p>C++’da argümanların evaluate edilme sırasının belirsiz olması, derleyicinizin bu adımları (1, 2, 3, 4) sırasında yapabileceği gibi (1, 3, 2, 4) veya uygun diğer herhangi bir sırada da yapabilir. Diyelim ki, 1. adımı yaptık ve 2. adımı atlayarak 3. adımı yapmaya karar verdik. C++’da new çağrıları eğer yeterince memory yoksa bir çeşit exception atmakta ve 3. adımdaki allocation gayet de başarısız olabilmekte. Tabi ki exception durumunda C++, o ana kadar oluştulmuş scope’daki bütün nesnelerin destructorlarını çağıracak. Ancak, 2. adımı sonraya bıraktığımız için, ilk <code class="highlighter-rouge">unique_ptr</code>‘ın destructoru çağırılmayacak dolayısıyla 1. adımda aldığımız memory leak edilecek.</p>
+
+<p>Dolayısıyla, new ile aldığınız pointerları doğrudan bir <code class="highlighter-rouge">unique_ptr</code> ile sarsanız dahi, başarısız olabilirsiniz. Bu sebeple, çıplak <code class="highlighter-rouge">new</code> çağrılarından kaçınmanızda ısrarcıyım.</p>
+
+<p>Peki bunlardan nasıl kurtulacağız? Bu konuda çözüm yine bir C++11 kütüphane güncellemesiyle geliyor: <code class="highlighter-rouge">std::make_unique</code>.</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">ptr</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">make_unique</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">5</span><span class="p">);</span>
+<span class="k">auto</span> <span class="n">ptr</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">make_unique</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">5</span><span class="p">);</span> <span class="c1">// daha da iyi</span>
+</code></pre></div></div>
+
+<p><code class="highlighter-rouge">std::make_unique</code>, sizin için dinamik olarak bir nesne oluşturup, size bu nesneyi gösteren bir unique_ptr dönüyor. Dolayısıyla, elinize dinamik nesneyi gösteren bir mal pointer asla geçmiyor. Bu demektir ki, bu nesneyi yanlışlıkla 2 kere silemezsiniz, bu nesneye 2 adet <code class="highlighter-rouge">unique_ptr</code> tutamazsınız ve fonksyon argüman evaluation sırası dolayısıyla kaynak leak edemezsiniz!</p>
+
+<h2 id="sonuç">Sonuç</h2>
+
+<p>Her ne kadar işinizi rahatlatsa da, unique_ptr kullanarak hala bindiğiniz dalı kesmeniz mümkün. Örnek bir kod:</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">auto</span> <span class="n">ptr</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">make_unique</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span><span class="p">(</span><span class="s">"hello world"</span><span class="p">);</span>
+<span class="p">...</span>
+<span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">*</span> <span class="n">s_ptr</span> <span class="o">=</span> <span class="n">ptr</span><span class="p">.</span><span class="n">get</span><span class="p">();</span> <span class="c1">// tehlike</span>
+<span class="p">...</span>
+</code></pre></div></div>
+
+<p>Üstteki tehlikeli satırda, yine dinamik bir nesneyi gösteren mal bir pointer elde etmeyi başardık, ve bu pointer’ı yine elle silebiliriz yada bu pointer’ı bir başka unique_ptr içine sarabiliriz. Bu noktada sıkıntı, mal pointerların hala sahiplik belirttiğini düşünmemiz. Yani default olarak basit pointerların sahiplik belirtmediğine kendinizi ikna ederseniz bu tarz sorunların hiç biriyle karşılaşmayacaksınız.</p>
+
+<p>Bu yazıdan aklınızda kalması gerekenler:</p>
+
+<ul>
+  <li>Çıplak <code class="highlighter-rouge">new</code>/<code class="highlighter-rouge">delete</code> çağrılarından kaçının</li>
+  <li>Mal pointerların sahiplik belirtmesine asla izin vermeyin</li>
+  <li>Dinamik kaynakları her zaman bir stack nesnesinin yönetmesini sağlayın</li>
+</ul>
+
+<p><a href="http://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#a-namerr-newdeletear11-avoid-calling-new-and-delete-explicitly">Konuyla alakalı CoreGuidelines bölümü</a></p>
+
+  </div><a class="u-url" href="/2016/11/25/naked_new_delete.html" hidden></a>
+</article>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/"></data>
+
+  <div class="wrapper">
+
+    <h2 class="footer-heading">Önbellek Blog</h2>
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col footer-col-1">
+        <ul class="contact-list">
+          <li class="p-name">Önbellek Blog</li></ul>
+      </div>
+
+      <div class="footer-col footer-col-2"><ul class="social-media-list"></ul>
+</div>
+
+      <div class="footer-col footer-col-3">
+        <p>Blog </p>
+      </div>
+    </div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>
